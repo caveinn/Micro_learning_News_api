@@ -1,0 +1,11 @@
+development:
+ adapter: postgresql
+ database: micro-learning-development
+
+test:
+ adapter: postgresql
+ database: micro-learning-test
+
+production:
+ adapter: postgresql
+ database: micro-learning-production
