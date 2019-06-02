@@ -1,0 +1,21 @@
+<div class="spaced">
+<% @results.each do |result|%>
+<a class="card" href=<%= result.url %>>
+<div class="card-header">
+    <h5><%=result.title%></h5>
+</div>
+<div class="card-body">
+<div class="row no-gutters">
+    <div class="col-md-4">
+      <img src="<%= result.urlToImage%>" class="card-img" alt="sorry_no_imag">
+      </div>
+<div class="card-text col-md-8 " style="padding-left:10px;">
+<h4 class="text-muted"><i><%= result.author%></i></h4>
+<p><%=result.description%></p>
+</div>
+</div>
+</div>
+</a>
+<br>
+<% end %>
+</div>

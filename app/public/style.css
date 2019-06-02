@@ -1,0 +1,11 @@
+.card {
+    color: black;
+}
+
+.spaced{
+    margin-top: 2em;
+}
+.spaced a:hover{
+    text-decoration: none;
+    color: black;
+}

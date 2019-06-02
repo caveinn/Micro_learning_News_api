@@ -1,6 +1,11 @@
+require 'date'
 class MicroLearningApp < Sinatra::Base
     enable :sessions
     set :session_secret, "secret_secret"
+
+    get "/" do
+        erb :home
+    end
   
     get "/signup" do
         erb :"users/signup"
@@ -29,7 +34,6 @@ class MicroLearningApp < Sinatra::Base
         user_pass = BCrypt::Password.new(user.password)
         if user_pass == params["password"]
             session["user_id"] = user.id
-            puts session.inspect
             redirect "/categories"
         else
             flash[:warning] = "something went wrong"
@@ -38,16 +42,19 @@ class MicroLearningApp < Sinatra::Base
     end
 
     get "/categories" do 
-        puts session.inspect
+        unless session.has_key?("user_id")  
+            @error = "kindly log in"
+            return erb :"users/login"
+        end
         @categories = Category.all
+        @user_categories = User.find(session["user_id"]).categories
         erb :"categories/show"
     end
 
     post "/categories" do
-        puts session.inspect
         unless session.has_key?("user_id")  
             @error = "kindly log in"
-            redirect "/login"
+            return erb :"users/login"
         end
         categories = []
         params.keys.each do |key|
@@ -56,8 +63,35 @@ class MicroLearningApp < Sinatra::Base
         end
         user = User.find(session["user_id"])
         user.categories = categories
-        puts user.inspect
         user.save
+    end
+
+    get "/results" do 
+        unless session.has_key?("user_id")  
+            @error = "kindly log in"
+            return erb :"users/login"
+        end
+        user = User.find(session["user_id"])
+        results = []
+        newsapi = News.new(ENV["API_KEY"])
+        user.categories.each do |category|
+            response = newsapi.get_everything(
+                q: category.name,
+                language: 'en',
+                from: Date.today.strftime("%Y-%m-%d"),
+                sortBy: 'relevancy'
+                )
+            results += response
+        
+        end
+
+        @results = results
+        erb :"results/show"
+    end
+
+    get "/logout" do
+        session.clear
+        redirect "/login"
     end
 
 end
