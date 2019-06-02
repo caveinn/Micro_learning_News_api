@@ -75,4 +75,13 @@ RSpec.describe "micro learning" do
     expect(last_response).to be_ok
     expect(last_response.body).to include("Results")
   end
+  
+  it "should be able to logout" do
+    post "/signup", test_user
+    post "/login", test_user
+    get "/logout"
+    expect(last_response).to be_redirect
+    follow_redirect!
+    expect(last_request.path).to eq("/login") 
+  end
 end
