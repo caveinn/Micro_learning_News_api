@@ -11,6 +11,7 @@ gem "shotgun"
 gem "bcrypt"
 gem "news-api"
 gem "sinatra-flash"
+gem "rake"
 
 group :test do
  gem "capybara"

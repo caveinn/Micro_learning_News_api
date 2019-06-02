@@ -12,7 +12,11 @@ class MicroLearningApp < Sinatra::Base
     end
 
     post "/signup" do
-        user = ""
+        user = User.find_by(user_name: params["user_name"])
+        if user
+            @error = "Cannot register multiple users with the same name"
+            return erb :"users/signup"
+        end
         if params["password"] == params["confirm_password"]
             params.delete("confirm_password")
             params["password"] = BCrypt::Password.create(params["password"])
@@ -68,6 +72,7 @@ class MicroLearningApp < Sinatra::Base
         user = User.find(session["user_id"])
         user.categories = categories
         user.save
+        redirect "/results"
     end
 
     get "/results" do 
