@@ -31,12 +31,16 @@ class MicroLearningApp < Sinatra::Base
 
     post "/login" do
         user = User.find_by(user_name: params["user_name"])
+        if not user
+            @error = "wrong password or username"
+            return erb :"users/login"
+        end
         user_pass = BCrypt::Password.new(user.password)
         if user_pass == params["password"]
             session["user_id"] = user.id
             redirect "/categories"
         else
-            flash[:warning] = "something went wrong"
+            @error = "wrong password or username"
             erb :"users/login"
         end
     end
